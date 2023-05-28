@@ -1,0 +1,53 @@
+import time
+import tkinter as tk
+from tkinter import messagebox
+
+class SpeedTypingTest:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Speed Typing Test")
+
+        self.text = "The quick brown fox jumps over the lazy dog."
+        self.user_input = None
+        self.start_time = None
+
+        self.setup_ui()
+
+    def setup_ui(self):
+        self.label_text = tk.Label(self.root, text="Type the following text as quickly as possible:")
+        self.label_text.pack()
+
+        self.label_sentence = tk.Label(self.root, text=self.text)
+        self.label_sentence.pack()
+
+        self.entry_input = tk.Entry(self.root)
+        self.entry_input.pack()
+
+        self.button_start = tk.Button(self.root, text="Start", command=self.start_typing_test)
+        self.button_start.pack()
+
+    def start_typing_test(self):
+        self.user_input = None
+        self.start_time = time.time()
+        self.entry_input.focus()
+
+        self.button_start.config(state=tk.DISABLED)
+        self.entry_input.bind("<Return>", self.complete_typing_test)
+
+    def complete_typing_test(self, event):
+        if self.user_input is None:
+            self.user_input = self.entry_input.get().strip()
+            self.entry_input.config(state=tk.DISABLED)
+            elapsed_time = time.time() - self.start_time
+            speed = self.calculate_typing_speed(elapsed_time, self.user_input)
+            messagebox.showinfo("Speed Typing Test", f"Test completed!\nYour typing speed: {speed:.2f} words per minute.")
+
+    def calculate_typing_speed(self, elapsed_time, user_input):
+        total_words = len(self.text.split())
+        words_typed = len(user_input.split())
+        speed = (words_typed / elapsed_time) * 60
+        return speed
+
+root = tk.Tk()
+app = SpeedTypingTest(root)
+root.mainloop()
